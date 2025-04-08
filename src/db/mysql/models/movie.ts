@@ -243,7 +243,7 @@ class Movie {
                     ...(sqlMessage && { sqlMessage }),
                 });
                 const err = new ErrorException(
-                    "Get Movies With Pagination - General SQL Error"
+                    "Update Movie - General SQL Error"
                 );
                 err.statusCode = 500;
                 err.errorType = ErrorType.ERROR;
@@ -321,17 +321,17 @@ class Movie {
 
     static async findById(id: string) {
         try {
-            const query = `SELECT * FROM task WHERE id = ?`;
-            const [taskResult, _]: [QueryResult, FieldPacket[]] =
+            const query = `SELECT * FROM movie WHERE id = ?`;
+            const [movieResult, _]: [QueryResult, FieldPacket[]] =
                 await this.pool.execute(query, [id]);
-            const task = taskResult as {
+            const movie = movieResult as {
                 id: number;
-                technician_id: number;
-                summary: string;
-                date_created: string;
-                status: string;
+                user_id: number;
+                title: string;
+                dateRelease: string;
+                favorit: string;
             }[]; // Type assertion
-            return task[0];
+            return movie[0];
         } catch (error: unknown) {
             if (error instanceof Error) {
                 const mysqlError = error as MySqlError;
@@ -345,7 +345,7 @@ class Movie {
                     ...(sqlMessage && { sqlMessage }),
                 });
                 const err = new ErrorException(
-                    "Get Movies With Pagination - General SQL Error"
+                    "Get Movie By Id - General SQL Error"
                 );
                 err.statusCode = 500;
                 err.errorType = ErrorType.ERROR;

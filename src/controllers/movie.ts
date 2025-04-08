@@ -3,6 +3,28 @@ import { ErrorException } from "../utils/error.js";
 
 import { Request, Response, NextFunction } from "express";
 
+export const getMovieById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { movieId } = req.query;
+        if (movieId) {
+            const movie = await Movie.findById(movieId as string);
+            res.status(200).json({
+                message: "Movie Detail",
+                data: {
+                    movieId,
+                    movie,
+                },
+            });
+        }
+    } catch (error) {
+        error instanceof ErrorException ? next(error) : console.warn(error);
+    }
+};
+
 export const getMovies = async (
     req: Request,
     res: Response,

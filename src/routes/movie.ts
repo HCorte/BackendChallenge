@@ -3,7 +3,7 @@ import express from "express";
 
 import { body } from "express-validator";
 
-import { getMovies, postMovie } from "../controllers/movie.js";
+import { getMovies, postMovie, getMovieById } from "../controllers/movie.js";
 import { isAuth } from "../middleware/is-auth.js";
 import { ErrorException, ErrorType } from "../utils/error.js";
 
@@ -38,7 +38,7 @@ router.post(
     postMovie
 );
 
-// router.put("/taskCompleted", checkDBConnection, isAuth, completeTask);
+router.get("/movieById", isAuth, getMovieById);
 
 router.all("*", function () {
     const error = new ErrorException("Bad Request");
