@@ -42,7 +42,7 @@ router.put(
 router.post("/login", checkDBConnection, login);
 
 router.all("*", function () {
-    const error = new ErrorException("Bad request");
+    const error = new ErrorException("Bad request auth");
     error.statusCode = 400;
     throw error;
 });

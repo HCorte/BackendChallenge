@@ -3,7 +3,7 @@ import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { ErrorException, errorHandling, ErrorType } from "../utils/error.js";
+import { ErrorException, ErrorType } from "../utils/error.js";
 import { Request, Response, NextFunction } from "express";
 import { createUser, findUser } from "../services/authService.js";
 import User from "../db/mysql/models/user.js";
@@ -50,9 +50,7 @@ export const signup = async (
             throw error;
         }
     } catch (error) {
-        error instanceof ErrorException
-            ? next(errorHandling(error))
-            : console.warn(error);
+        error instanceof ErrorException ? next(error) : console.warn(error);
     }
 };
 
@@ -101,8 +99,6 @@ export const login = async (
         });
         return;
     } catch (err) {
-        err instanceof ErrorException
-            ? next(errorHandling(err))
-            : console.warn(err);
+        err instanceof ErrorException ? next(err) : console.warn(err);
     }
 };

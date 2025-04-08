@@ -4,3 +4,5 @@ export type UserId = string;
 export type Email = string;
 export type Username = string;
 export type DB = PoolConnection;
+export type FileName = string;
+//export type ImagesPath = string;

@@ -1,5 +1,5 @@
 import User from "../db/mysql/models/user.js";
-import { ErrorException, errorHandling } from "../utils/error.js";
+import { ErrorException } from "../utils/error.js";
 
 import { Request, Response, NextFunction } from "express";
 
@@ -22,12 +22,13 @@ export const status = async (
         } else {
             res.status(400).json({
                 error: "Bad Request",
+                data: {
+                    status: 3,
+                },
             });
         }
     } catch (error) {
-        error instanceof ErrorException
-            ? next(errorHandling(error))
-            : console.warn(error);
+        error instanceof ErrorException ? next(error) : console.warn(error);
     }
 };
 
@@ -55,11 +56,12 @@ export const updateStatus = async (
         } else {
             res.status(400).json({
                 error: "Bad Request",
+                data: {
+                    status: 4,
+                },
             });
         }
     } catch (error) {
-        error instanceof ErrorException
-            ? next(errorHandling(error))
-            : console.warn(error);
+        error instanceof ErrorException ? next(error) : console.warn(error);
     }
 };

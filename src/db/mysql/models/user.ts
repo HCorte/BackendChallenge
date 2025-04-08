@@ -1,6 +1,5 @@
 import { Pool, ResultSetHeader } from "mysql2/promise";
-import MySQL from "../connection.js"; // Import the database connection
-import { MySqlError } from "../../../types/error/mysqlError.js";
+import MySQL, { MySqlError } from "../connection.js"; // Import the database connection
 import { ErrorException, ErrorType } from "../../../utils/error.js";
 
 class User {

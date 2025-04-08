@@ -20,7 +20,7 @@ router.put(
 );
 
 router.all("*", function (_req: Request, _res: Response, next: NextFunction) {
-    const error = new ErrorException("Bad request");
+    const error = new ErrorException("Bad request User");
     error.statusCode = 400;
     next(error);
 });

@@ -3,6 +3,7 @@ import { dbConfig } from "./config.js";
 import { MySqlError } from "../../types/error/mysqlError.js";
 import { getMySqlError } from "../../utils/mysqlErrorHandler.js";
 
+export { MySqlError };
 class MySQL {
     private static instance: MySQL;
     private pool: Pool | null = null;
@@ -97,25 +98,29 @@ class MySQL {
             await connection.execute(`
                 CREATE TABLE IF NOT EXISTS user(
                     id int NOT NULL AUTO_INCREMENT, 
-                    username varchar(45) NOT NULL,
-                    password varchar(300) NOT NULL,
-                    email varchar(45) NOT NULL,
-                    firstname varchar(45) NOT NULL,
-                    lastname varchar(45) NOT NULL,
+                    username VARCHAR(45) NOT NULL,
+                    password VARCHAR(300) NOT NULL,
+                    email VARCHAR(45) NOT NULL,
+                    firstname VARCHAR(45) NOT NULL,
+                    lastname VARCHAR(45) NOT NULL,
                     UNIQUE (username),
                     KEY idx_email (email),
                     PRIMARY KEY (id)  
                 );
             `);
 
+            // status tinyint NOT NULL,
+            //categories
+            //actorsList
             await connection.execute(`
                     CREATE TABLE IF NOT EXISTS movie(
                         id int NOT NULL AUTO_INCREMENT, 
                         user_id INT NOT NULL,
-                        title varchar(250),
-                        summary varchar(2500) NOT NULL,
-                        date_created varchar(50) NOT NULL,  
-                        status tinyint NOT NULL,
+                        title VARCHAR(250),
+                        summary VARCHAR(2500) NOT NULL,
+                        thumbnail VARCHAR(255),
+                        dateRelease DATETIME NOT NULL,  
+                        favorit BOOLEAN DEFAULT FAlSE,
                         PRIMARY KEY (id),
                         FOREIGN KEY (user_id) REFERENCES user(id)
                     );              

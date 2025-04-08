@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
 import bodyParser from "body-parser";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import "./db/index.js"; // Triggers the database connection
 
 import multer, { FileFilterCallback } from "multer";
@@ -10,7 +11,8 @@ import { ErrorException, ErrorType } from "./utils/error.js";
 import { logger } from "./utils/logger.js";
 
 import authRoutes from "./routes/auth.js";
-// import userRoutes from "./routes/user.js";
+import movieRoutes from "./routes/movie.js";
+import dummyDataRoutes from "./routes/dummyData.js";
 
 import { get400 } from "./controllers/error.js";
 
@@ -20,12 +22,20 @@ type DestinationCallback = (error: Error | null, destination: string) => void;
 type FileNameCallback = (error: Error | null, filename: string) => void;
 
 (async () => {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    const images_path = path.join(__dirname, "images");
+
     const fileStorage = multer.diskStorage({
         destination: (_req, _file, cb: DestinationCallback) => {
-            cb(null, "images");
+            cb(null, "dist/images");
         },
-        filename: (_req, file: Express.Multer.File, cb: FileNameCallback) => {
-            cb(null, `${new Date().toISOString()}-${file.originalname}`);
+        filename: (req, file: Express.Multer.File, cb: FileNameCallback) => {
+            const timestamp = new Date().toISOString();
+            const filename = `${timestamp}-${file.originalname}`;
+            req.filename = filename;
+            //req.images_path = images_path;
+            cb(null, filename);
         },
     });
 
@@ -53,10 +63,10 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
         }).single("image")
     );
 
-    app.use(
-        "/images",
-        express.static(path.join(import.meta.filename, "images"))
-    );
+    /**
+     * render static images from the path /images
+     */
+    app.use("/images", express.static(images_path));
 
     app.use((_req, res, next) => {
         res.setHeader("Access-Control-Allow-Origin", "*");
@@ -72,7 +82,8 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
     });
 
     app.use("/auth", authRoutes);
-    // app.use("/user", userRoutes);
+    app.use("/movie", movieRoutes);
+    app.use("/dummy", dummyDataRoutes);
     app.use(get400);
 
     app.use(
