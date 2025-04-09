@@ -48,7 +48,8 @@ router.all("*", function (req: Request) {
     error.statusCode = 400;
     error.data = {
         status: 5,
-        path: req.originalUrl
+        path: req.originalUrl,
+        method: req.method,
     };
     throw error;
 });

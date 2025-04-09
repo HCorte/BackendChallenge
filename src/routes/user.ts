@@ -25,7 +25,8 @@ router.all("*", function (req: Request, _res: Response, next: NextFunction) {
     error.errorType = ErrorType.WARNING;
     error.data = {
         status: 5,
-        path: req.originalUrl
+        path: req.originalUrl,
+        method: req.method,
     };
     next(error);
 });
