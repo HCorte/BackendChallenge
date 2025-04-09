@@ -18,9 +18,10 @@ class Movie {
         public summary: string,
         public thumbnail: string,
         public dateRelease: Date,
+        public revenue: number,
         // public categories: string[],
         // public actorsList: string[],
-        public favorit: boolean = false
+        // public favorit: boolean = false
     ) {}
 
     static async create({
@@ -29,18 +30,20 @@ class Movie {
         summary,
         dateRelease = today(),
         filename,
+        revenue,
         // categories = [],
         // actorsList = [],
-        favorit = false,
+        // favorit = false,
     }: {
         userId: number;
         title: string;
         summary: string;
         filename: string;
         dateRelease: Date;
+        revenue: number;
         // categories: string[];
         // actorsList?: string[];
-        favorit: boolean;
+        // favorit: boolean;
     }) {
         try {
             //categories,
@@ -52,7 +55,7 @@ class Movie {
                     summary,  
                     thumbnail,
                     dateRelease,
-                    favorit
+                    revenue
                 ) 
                 VALUES (?, ?, ?, ?, ?, ?);
             `;
@@ -62,9 +65,10 @@ class Movie {
                 summary,
                 filename,
                 dateRelease,
+                revenue,
                 // categories,
                 // actorsList,
-                favorit ? 1 : 0,
+                // favorit ? 1 : 0,
             ]);
             return new Movie(
                 result.insertId,
@@ -73,9 +77,10 @@ class Movie {
                 summary,
                 filename,
                 dateRelease,
+                revenue,
                 // categories,
                 // actorsList,
-                favorit
+                // favorit
             );
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -128,7 +133,8 @@ class Movie {
             summary: string;
             image: string;
             dateRelease: Date;
-            favorit: boolean;
+            revenue: number;
+            // favorit: boolean;
         }[]
     ) {
         try {
@@ -139,7 +145,7 @@ class Movie {
                     summary,
                     thumbnail,
                     dateRelease,
-                    favorit
+                    revenue
                 )
                 VALUES ?;
             `;
@@ -150,7 +156,8 @@ class Movie {
                 movie.summary,
                 movie.image,
                 movie.dateRelease,
-                movie.favorit ? 1 : 0,
+                movie.revenue,
+                // movie.favorit ? 1 : 0,
             ]);
 
             // return values;
@@ -216,7 +223,7 @@ class Movie {
                 dateRelease = ?, 
                 categories = ?, 
                 actorsList = ?,
-                favorit = ?
+                revenue = ?
                 WHERE id = ?
             `;
             await Movie.pool.execute(query, [
@@ -225,7 +232,7 @@ class Movie {
                 this.dateRelease,
                 // this.categories,
                 // this.actorsList,
-                this.favorit,
+                this.revenue,
             ]);
             return {
                 message: `Movie ${this.title} as been updated`,
@@ -265,7 +272,7 @@ class Movie {
     ) {
         try {
             const limit = moviesPerPage < 70 ? moviesPerPage : 30;
-            const offset = currentPage * limit;
+            const offset = (currentPage-1) * limit;
 
             const query = `
                 SELECT * FROM movie 
@@ -329,7 +336,7 @@ class Movie {
                 user_id: number;
                 title: string;
                 dateRelease: string;
-                favorit: string;
+                revenue: number;
             }[]; // Type assertion
             return movie[0];
         } catch (error: unknown) {

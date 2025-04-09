@@ -34,6 +34,7 @@ export const getMovies = async (
         const { currentPage, moviesPerPage } = req.query;
         const page = Number(currentPage) || 1;
         const limit = Number(moviesPerPage) || 30;
+        
         const movies = await Movie.findWithPagination(page, limit);
         res.status(200).json({
             message: "List of Movies",
@@ -56,7 +57,8 @@ export const postMovie = async (
                 summary,
                 dateRelease = new Date(),
                 image,
-                favorit = false,
+                revenue,
+                // favorit = false,
             } = req.body;
 
             const filename = req.filename || image || "default_thumbnail.png";
@@ -66,7 +68,7 @@ export const postMovie = async (
                 summary,
                 filename,
                 dateRelease,
-                favorit,
+                revenue,
             });
             res.status(200).json({
                 message: "Movie created Successfully",
