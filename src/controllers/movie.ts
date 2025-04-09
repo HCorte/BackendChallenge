@@ -3,6 +3,26 @@ import { ErrorException } from "../utils/error.js";
 
 import { Request, Response, NextFunction } from "express";
 
+export const getMoviesWithFilters = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const { ntop, year } = req.query;
+        const numberOfTopMovies = Number(ntop) || 10;
+        const yearReleased = Number(year) || 0;
+
+        const movies = await Movie.findWithFilter(numberOfTopMovies, yearReleased);
+        res.status(200).json({
+            message: "List of Movies",
+            movies,
+        });
+    } catch (error) {
+        error instanceof ErrorException ? next(error) : console.warn(error);
+    }
+};
+
 export const getMovieById = async (
     req: Request,
     res: Response,

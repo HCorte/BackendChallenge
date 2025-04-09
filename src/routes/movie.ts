@@ -3,13 +3,15 @@ import express from "express";
 
 import { body } from "express-validator";
 
-import { getMovies, postMovie, getMovieById } from "../controllers/movie.js";
+import { getMovies, postMovie, getMovieById, getMoviesWithFilters } from "../controllers/movie.js";
 import { isAuth } from "../middleware/is-auth.js";
 import { ErrorException, ErrorType } from "../utils/error.js";
 
 const router = express.Router();
 
 router.get("/movies", isAuth, getMovies);
+
+router.get("/moviesfiltered", isAuth, getMoviesWithFilters),
 
 router.post(
     "/create",

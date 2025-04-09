@@ -266,6 +266,70 @@ class Movie {
         }
     }
 
+    static async findWithFilter(
+        numberOfTopMovies: number = 10,
+        yearReleased: number = 0
+    ) {
+        try {
+            const maxNumberOfTopMovies = numberOfTopMovies < 100 ? numberOfTopMovies : 10;
+            
+            if(yearReleased === 0){
+                    const query = `
+                    SELECT * FROM movie
+                    ORDER BY revenue DESC
+                    LIMIT ?;
+                `;
+
+                const [moviesResult, _]: [QueryResult, FieldPacket[]] =
+                    await this.pool.execute(query, [
+                        maxNumberOfTopMovies.toString(),
+                    ]); 
+                return moviesResult;
+            } else {
+                const query = `
+                    SELECT * FROM movie
+                    WHERE YEAR(dateRelease) = ?
+                    ORDER BY revenue DESC
+                    LIMIT ?;
+                `;
+
+                const [moviesResult, _]: [QueryResult, FieldPacket[]] =
+                    await this.pool.execute(query, [
+                        yearReleased.toString(),
+                        maxNumberOfTopMovies.toString(),
+                    ]); 
+                return moviesResult;
+            }
+            
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                const mysqlError = error as MySqlError;
+                const { code, errno, sqlState, sqlMessage } = mysqlError;
+
+                console.error({
+                    message: "General SQL Error",
+                    ...(code && { code }),
+                    ...(errno && { errno }),
+                    ...(sqlState && { sqlState }),
+                    ...(sqlMessage && { sqlMessage }),
+                });
+                const err = new ErrorException(
+                    "Get Movies With Pagination - General SQL Error"
+                );
+                err.statusCode = 500;
+                err.errorType = ErrorType.ERROR;
+                err.data = {
+                    ...(code && { code }),
+                    ...(errno && { errno }),
+                    ...(sqlState && { sqlState }),
+                    ...(sqlMessage && { sqlMessage }),
+                };
+                throw err;
+            }
+            return;
+        }
+    }
+
     static async findWithPagination(
         currentPage: number = 1,
         moviesPerPage: number = 30
