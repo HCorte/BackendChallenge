@@ -120,7 +120,7 @@ class MySQL {
                         summary VARCHAR(2500) NOT NULL,
                         thumbnail VARCHAR(255),
                         dateRelease DATETIME NOT NULL,  
-                        favorit BOOLEAN DEFAULT FAlSE,
+                        revenue INT NOT NULL,
                         PRIMARY KEY (id),
                         FOREIGN KEY (user_id) REFERENCES user(id)
                     );              
