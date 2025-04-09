@@ -48,6 +48,7 @@ class Movie {
         try {
             //categories,
             //actorsList,
+            const yearRelease = dateRelease.getFullYear();
             const query = `
                 INSERT INTO movie (
                     user_id, 
@@ -55,9 +56,10 @@ class Movie {
                     summary,  
                     thumbnail,
                     dateRelease,
+                    yearRelease,
                     revenue
                 ) 
-                VALUES (?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?, ?);
             `;
             const [result] = await this.pool.execute<ResultSetHeader>(query, [
                 userId,
@@ -65,6 +67,7 @@ class Movie {
                 summary,
                 filename,
                 dateRelease,
+                yearRelease,
                 revenue,
                 // categories,
                 // actorsList,
@@ -145,22 +148,43 @@ class Movie {
                     summary,
                     thumbnail,
                     dateRelease,
+                    yearRelease,
                     revenue
                 )
                 VALUES ?;
             `;
 
-            const values = movies.map((movie) => [
-                movie.userId || 1,
-                movie.title,
-                movie.summary,
-                movie.image,
-                movie.dateRelease,
-                movie.revenue,
-                // movie.favorit ? 1 : 0,
-            ]);
+            const uniqueUserMovies = new Set();
+            const values = movies.map((movie) => {
+                const movieKey = `${movie.userId || 1}_${movie.title}`;
 
-            // return values;
+                if (uniqueUserMovies.has(movieKey)) {
+                    return null; // Skip this movie if it's allready exist for this user
+                }
+
+                // Add to the set if it's a new a movie title for this user
+                uniqueUserMovies.add(movieKey);
+                let yearRelease: number | string;
+                if(movie.dateRelease instanceof Date){
+                    yearRelease = movie.dateRelease.getFullYear()
+                } else if(typeof movie.dateRelease === 'string'){
+                    const dateReleaseAsString = movie.dateRelease as string;
+                    yearRelease = dateReleaseAsString.substring(0, 4)
+                } else {
+                    yearRelease = ''
+                }
+
+                return [
+                    movie.userId || 1,
+                    movie.title,
+                    movie.summary,
+                    movie.image,
+                    movie.dateRelease,
+                    yearRelease,
+                    movie.revenue,
+                    // movie.favorit ? 1 : 0,
+                ]
+            }).filter(Boolean);
 
             const [result] = await this.pool.query<ResultSetHeader>(query, [
                 values,
@@ -197,7 +221,7 @@ class Movie {
                         ...(sqlMessage && { sqlMessage }),
                     });
                     const error = new ErrorException(
-                        "Movie Creation - General SQL Error"
+                        "Movie Creation Bulk - General SQL Error"
                     );
                     error.statusCode = 500;
                     error.errorType = ErrorType.ERROR;
@@ -288,7 +312,7 @@ class Movie {
             } else {
                 const query = `
                     SELECT * FROM movie
-                    WHERE YEAR(dateRelease) = ?
+                    WHERE yearRelease = ?
                     ORDER BY revenue DESC
                     LIMIT ?;
                 `;

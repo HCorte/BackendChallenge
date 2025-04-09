@@ -119,10 +119,13 @@ class MySQL {
                         title VARCHAR(250),
                         summary VARCHAR(2500) NOT NULL,
                         thumbnail VARCHAR(255),
-                        dateRelease DATETIME NOT NULL,  
+                        dateRelease DATETIME NOT NULL,
+                        yearRelease SMALLINT NOT NULL,
                         revenue INT NOT NULL,
                         PRIMARY KEY (id),
-                        FOREIGN KEY (user_id) REFERENCES user(id)
+                        FOREIGN KEY (user_id) REFERENCES user(id),
+                        UNIQUE (user_id, title),
+                        INDEX idx_yearRelease (yearRelease)
                     );              
                 `);
 
