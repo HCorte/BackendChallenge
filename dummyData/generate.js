@@ -71,6 +71,44 @@ const imageURLs = [
     "https://wallpapercave.com/wp/wp1945933.jpg",
 ]
 
+const revenues = [
+    10,
+    5,
+    150,
+    200,
+    250,
+    325,
+    400,
+    425,
+    450,
+    475,
+    480,
+    490,
+    800,
+    1000,
+    1400,
+    1800,
+    2000,
+    3000,
+    4000,
+    6000,
+    8000,
+    10000,
+    13000,
+    15000,
+    20000,
+    23000,
+    25000,
+    28000,
+    30000,
+    100000,
+    200000,
+    500000,
+    1000000,
+    3000000,
+    5000000
+]
+
 // Generate 200 movie objects
 const movies = [];
 for (let i = 0; i < 200; i++) {
@@ -78,7 +116,8 @@ for (let i = 0; i < 200; i++) {
         title: movieTitles[Math.floor(Math.random() * movieTitles.length)],
         summary: summaries[Math.floor(Math.random() * summaries.length)],
         dateRelease: randomDateRelease(),
-        image: imageURLs[Math.floor(Math.random() * imageURLs.length)]
+        image: imageURLs[Math.floor(Math.random() * imageURLs.length)],
+        revenue: revenues[Math.floor(Math.random() * revenues.length)]
     };
     movies.push(movie);
 }
