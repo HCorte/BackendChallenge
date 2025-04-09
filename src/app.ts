@@ -72,7 +72,7 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader(
             "Access-Control-Allow-Methods",
-            "GET, POST, PUT, PATH, DELETE"
+            "GET, POST, PUT, PATCH, DELETE"
         );
         res.setHeader(
             "Access-Control-Allow-Headers",
@@ -80,6 +80,14 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
         );
         next();
     });
+
+    // to manually handle OPTIONS requests of CORS preflight:
+    app.options('*', (_req, res) => {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.status(200).end(); // Respond with 200 OK
+      });
 
     app.use("/auth", authRoutes);
     app.use("/movie", movieRoutes);

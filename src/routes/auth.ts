@@ -1,17 +1,16 @@
 /* eslint-disable indent */
-import express from "express";
+import express, {Request} from "express";
 import { body } from "express-validator";
 
 // import { User } from "../db/mongodb/models/user.js";
 import { findUser } from "../services/authService.js";
 import { signup, login } from "../controllers/auth.js";
-
-import { ErrorException } from "../utils/error.js";
+import { ErrorException, ErrorType } from "../utils/error.js";
 import { checkDBConnection } from "../middleware/is-connected.js";
 
 const router = express.Router();
 
-router.put(
+router.post(
     "/signup",
     checkDBConnection,
     [
@@ -41,9 +40,13 @@ router.put(
 
 router.post("/login", checkDBConnection, login);
 
-router.all("*", function () {
+router.all("*", function (req: Request) {
     const error = new ErrorException("Bad request auth");
+    error.errorType = ErrorType.WARNING;
     error.statusCode = 400;
+    error.data = {
+        path: req.originalUrl
+    };
     throw error;
 });
 

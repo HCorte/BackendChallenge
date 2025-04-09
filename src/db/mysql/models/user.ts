@@ -58,11 +58,23 @@ class User {
                         ...(sqlState && { sqlState }),
                         ...(sqlMessage && { sqlMessage }),
                     });
-                    return {
-                        error: true,
-                        message:
-                            "Invalid this username already exist try another one",
+                    const error = new ErrorException(
+                        "Invalid this username already exist try another one"
+                    );
+                    error.statusCode = 409;
+                    error.errorType = ErrorType.WARNING;
+                    error.data = {
+                        ...(code && { code }),
+                        ...(errno && { errno }),
+                        ...(sqlState && { sqlState }),
+                        ...(sqlMessage && { sqlMessage }),
                     };
+                    throw error;
+                    // return {
+                    //     error: true,
+                    //     message:
+                    //         "Invalid this username already exist try another one",
+                    // };
                 } else {
                     console.error({
                         message: "General SQL Error",
