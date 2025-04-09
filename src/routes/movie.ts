@@ -1,4 +1,4 @@
-import express from "express";
+import express, {Request} from "express";
 // import { body } from "express-validator";
 
 import { body } from "express-validator";
@@ -42,13 +42,14 @@ router.post(
 
 router.get("/movieById", isAuth, getMovieById);
 
-router.all("*", function () {
+router.all("*", function (req: Request) {
     const error = new ErrorException("Bad Request");
     error.errorType = ErrorType.WARNING;
+    error.statusCode = 400;
     error.data = {
         status: 5,
+        path: req.originalUrl
     };
-    error.statusCode = 400;
     throw error;
 });
 

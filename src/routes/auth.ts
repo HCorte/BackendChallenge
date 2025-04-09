@@ -41,10 +41,11 @@ router.post(
 router.post("/login", checkDBConnection, login);
 
 router.all("*", function (req: Request) {
-    const error = new ErrorException("Bad request auth");
+    const error = new ErrorException("Bad Request");
     error.errorType = ErrorType.WARNING;
     error.statusCode = 400;
     error.data = {
+        status: 8,
         path: req.originalUrl
     };
     throw error;
