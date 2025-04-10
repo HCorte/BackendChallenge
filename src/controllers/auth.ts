@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 import { ErrorException, ErrorType } from "../utils/error.js";
 import { Request, Response, NextFunction } from "express";
-import { createUser, findUser } from "../services/authService.js";
+import { createUser, findUserByUsername } from "../services/authService.js";
 import User from "../db/mysql/models/user.js";
 
 export const signup = async (
@@ -60,16 +60,25 @@ export const login = async (
     next: NextFunction
 ) => {
     try {
-        const { email, password } = req.body;
-        const user = await findUser({ email });
+        const { username, password } = req.body;
+        if(!(username && password)){
+            const error = new ErrorException(
+                "Bad Request"
+            );
+            error.statusCode = 400;
+            error.errorType = ErrorType.WARNING;
+            throw error;
+        }
+        const user = await findUserByUsername({ username });
+        console.log(user)
         if (!user) {
             const error = new ErrorException(
-                "This email or password is invalid"
+                "This username or password is invalid"
             );
             error.statusCode = 401;
             error.errorType = ErrorType.INFO;
             error.data = {
-                email,
+                username,
             };
             throw error;
         }
@@ -77,7 +86,7 @@ export const login = async (
         const validPass = await bcrypt.compare(password, user.password);
         if (!validPass) {
             const error = new ErrorException(
-                "This email or password is invalid"
+                "This username or password is invalid"
             );
             error.statusCode = 401;
             throw error;

@@ -40,6 +40,16 @@ export const deleteUser = async ({ username }: DeleteUser) => {
     return deleteUser;
 };
 
+export const findUserByUsername = async ({ username }: { username: string }) => {
+    const user = await User.findOne({
+        username: username,
+    });
+    if (!user) {
+        return null;
+    }
+    return user;
+};
+
 export const findUser = async ({ email }: { email: string }) => {
     const user = await User.findOne({
         email: email,
