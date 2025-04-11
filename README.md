@@ -9,6 +9,19 @@ Ensure you have the following installed on your machine:
 * [Node.js](https://nodejs.org/) (v20.18.3 or later recommended)
 * NPM (v10.8.2 or later recommended)
 
+* Its needed a .env file with the following environment variables:
+
+Port where that Node instance will use
+PORT=8080   
+Environment use keep 'development'
+NODE_ENV=development  
+MySQL database paramameter (the names give are self explained)
+MYSQL_DB_USER=root
+MYSQL_DB_PASSWORD=
+MYSQL_DB_HOST=localhost
+MYSQL_DB_NAME=backend_challenge_hc
+MYSQL_DB_PORT=3306
+
 ### Development Environment (Optional)
 
 eslint:
@@ -33,117 +46,19 @@ Extensions (VSC):
    npm install
    ```
 
-### Running the Application
+### Running the Application (DEV)
 
-#### Without Docker
-
-1. Start RabbitMQ (if running locally, ensure it's installed and running on default port `5672`)
-2. Build Project to compile
    ```
-   npm run build
+   npm run start 
    ```
-3. Start the Node.js server:
+   or just
+
    ```
-   npm start
+   npm start 
    ```
-
-#### Using Docker
-
-1. Start RabbitMQ using Docker:
-   ```
-   docker run -d --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:management
-   ```
-2. Start the Node.js server:
-   ```
-   npm start
-   ```
-
-## Message Broker - RabbitMQ
-
-RabbitMQ is a message broker that enables communication between different services using message queues. It helps in decoupling microservices, ensuring reliable message delivery, and improving scalability.
-
-### Why Use RabbitMQ?
-
-* **Decoupling**: Allows independent microservices to communicate without tight dependencies.
-* **Scalability**: Manages message queues efficiently, distributing workload among consumers.
-* **Reliability**: Supports message acknowledgment, ensuring no message is lost.
-
-### Connecting to RabbitMQ
-
-In your Node.js application, you can use `<span>amqplib</span>` to connect to RabbitMQ and send/receive messages.
-
-#### Example: Sending and Receiving Messages
-
-Install `amqplib`:
-
-```
-npm install amqplib
-```
-
-**Producer (Sending Messages):**
-
-```
-const amqp = require('amqplib');
-
-async function sendMessage() {
-    const connection = await amqp.connect('amqp://localhost');
-    const channel = await connection.createChannel();
-    const queue = 'task_queue';
-
-    await channel.assertQueue(queue, { durable: true });
-    const message = 'Hello, RabbitMQ!';
-    channel.sendToQueue(queue, Buffer.from(message), { persistent: true });
-    console.log(`Sent: ${message}`);
-
-    setTimeout(() => {
-        connection.close();
-    }, 500);
-}
-
-sendMessage();
-```
-
-**Consumer (Receiving Messages):**
-
-```
-const amqp = require('amqplib');
-
-async function receiveMessage() {
-    const connection = await amqp.connect('amqp://localhost');
-    const channel = await connection.createChannel();
-    const queue = 'task_queue';
-
-    await channel.assertQueue(queue, { durable: true });
-    console.log(`Waiting for messages in ${queue}`);
-
-    channel.consume(queue, (msg) => {
-        if (msg) {
-            console.log(`Received: ${msg.content.toString()}`);
-            channel.ack(msg);
-        }
-    });
-}
-
-receiveMessage();
-```
-
-### Monitoring RabbitMQ
-
-If RabbitMQ is installed locally, enable the plugin with:
-
-```
-sudo rabbitmq-plugins enable rabbitmq_management
-```
-
-If you are using the RabbitMQ management plugin (`rabbitmq:management` Docker image), you can access the management UI:
-
-* URL: [http://localhost:15672]()
-* Default Credentials:
-  * Username: `guest`
-  * Password: `guest`
 
 ## Conclusion
 
-This project demonstrates how to integrate RabbitMQ with a Node.js application for message-driven communication. Modify the queue names and settings as needed for your application.
+This project serves as a backend to be used with decoupled frontend in this case a React.js project
 
 ---
