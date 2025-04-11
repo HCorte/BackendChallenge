@@ -45,6 +45,9 @@ Extensions (VSC):
    ```
    npm install
    ```
+3. Install MySQL:  
+   
+   [MySQL Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-20-04)
 
 ### Running the Application (DEV)
 
