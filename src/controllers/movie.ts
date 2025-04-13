@@ -50,13 +50,22 @@ export const getMovieById = async (
         const { movieId } = req.query;
         if (movieId) {
             const movie = await Movie.findById(movieId as string);
-            res.status(200).json({
-                message: "Movie Detail",
-                data: {
-                    movieId,
-                    movie,
-                },
-            });
+            if (movie) {
+                res.status(200).json({
+                    message: "Movie Detail",
+                    data: {
+                        movieId,
+                        movie,
+                    },
+                });
+            } else {
+                res.status(404).json({
+                    message: "Movie Detail - Not Found",
+                    data: {
+                        movieId,
+                    },
+                });
+            }
         }
     } catch (error) {
         error instanceof ErrorException ? next(error) : console.warn(error);

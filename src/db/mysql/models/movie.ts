@@ -422,9 +422,9 @@ class Movie {
     static async findById(id: string) {
         try {
             const query = `SELECT * FROM movie WHERE id = ?`;
-            const [movieResult, _]: [QueryResult, FieldPacket[]] =
+            const [queryResult, _]: [QueryResult, FieldPacket[]] =
                 await this.pool.execute(query, [id]);
-            const movie = movieResult as {
+            const movie = queryResult as {
                 id: number;
                 user_id: number;
                 title: string;
