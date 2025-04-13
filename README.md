@@ -6,9 +6,9 @@
 
 Ensure you have the following installed on your machine:
 
-* [Node.js](https://nodejs.org/) (v20.18.3 or later recommended)
-* NPM (v10.8.2 or later recommended)
-* Its needed a .env file with the following environment variables:
+- [Node.js](https://nodejs.org/) (v20.18.3 or later recommended)
+- NPM (v10.8.2 or later recommended)
+- Its needed a .env file with the following environment variables:
 
 Port where that Node instance will use
 PORT=8080
@@ -38,6 +38,12 @@ the base_url would be localhost:8080 in case the port is 8080 being used.
 
 3. The first step can be ignore since there is already a dummyDataSet in dummyData folder ready to be use.
 
+### For Testing Backend Rest API
+
+There is a Folder called Postman that haves a collection of postman to make requests to the endpoits - Import that Collection (BackendChallenge.postman_collection.json)
+
+Import now the Environment (REST API.postman_environment.json) where its defined the variable base_url.
+
 ### Development Environment (Optional)
 
 eslint:
@@ -45,9 +51,9 @@ prettiefy
 
 Extensions (VSC):
 
-* Prettier ESLint
-* ESLint
-* Prettier - Code formatter
+- Prettier ESLint
+- ESLint
+- Prettier - Code formatter
 
 ### Installation
 
@@ -70,13 +76,13 @@ Extensions (VSC):
 ### Running the Application (DEV)
 
 ```
-   npm run start 
+   npm run start
 ```
 
-   or just
+or just
 
 ```
-   npm start 
+   npm start
 ```
 
 ## Conclusion
