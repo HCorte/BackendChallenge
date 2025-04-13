@@ -11,9 +11,13 @@ Ensure you have the following installed on your machine:
 -   Its needed a .env file with the following environment variables:
 
 Port where that Node instance will use
+
 PORT=8080
+
 Environment use keep 'development'
+
 NODE_ENV=development
+
 MySQL database paramameter (the names give are self explained)
 
 MYSQL_DB_USER=root
