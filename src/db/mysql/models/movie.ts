@@ -8,6 +8,8 @@ import MySQL, { MySqlError } from "../connection.js";
 import { today } from "../../../utils/dates.js";
 import { ErrorException, ErrorType } from "../../../utils/error.js";
 
+import { MovieType } from "../../../types/movies.js";
+
 class Movie {
     private static pool: Pool = MySQL.getPool(); // Use the shared connection pool
 
@@ -18,10 +20,7 @@ class Movie {
         public summary: string,
         public thumbnail: string,
         public dateRelease: Date,
-        public revenue: number,
-        // public categories: string[],
-        // public actorsList: string[],
-        // public favorit: boolean = false
+        public revenue: number // public categories: string[], // public actorsList: string[], // public favorit: boolean = false
     ) {}
 
     static async create({
@@ -31,10 +30,10 @@ class Movie {
         dateRelease = today(),
         filename,
         revenue,
-        // categories = [],
-        // actorsList = [],
-        // favorit = false,
-    }: {
+    }: // categories = [],
+    // actorsList = [],
+    // favorit = false,
+    {
         userId: number;
         title: string;
         summary: string;
@@ -80,7 +79,7 @@ class Movie {
                 summary,
                 filename,
                 dateRelease,
-                revenue,
+                revenue
                 // categories,
                 // actorsList,
                 // favorit
@@ -155,36 +154,38 @@ class Movie {
             `;
 
             const uniqueUserMovies = new Set();
-            const values = movies.map((movie) => {
-                const movieKey = `${movie.userId || 1}_${movie.title}`;
+            const values = movies
+                .map((movie) => {
+                    const movieKey = `${movie.userId || 1}_${movie.title}`;
 
-                if (uniqueUserMovies.has(movieKey)) {
-                    return null; // Skip this movie if it's allready exist for this user
-                }
+                    if (uniqueUserMovies.has(movieKey)) {
+                        return null; // Skip this movie if it's allready exist for this user
+                    }
 
-                // Add to the set if it's a new a movie title for this user
-                uniqueUserMovies.add(movieKey);
-                let yearRelease: number | string;
-                if(movie.dateRelease instanceof Date){
-                    yearRelease = movie.dateRelease.getFullYear()
-                } else if(typeof movie.dateRelease === 'string'){
-                    const dateReleaseAsString = movie.dateRelease as string;
-                    yearRelease = dateReleaseAsString.substring(0, 4)
-                } else {
-                    yearRelease = ''
-                }
+                    // Add to the set if it's a new a movie title for this user
+                    uniqueUserMovies.add(movieKey);
+                    let yearRelease: number | string;
+                    if (movie.dateRelease instanceof Date) {
+                        yearRelease = movie.dateRelease.getFullYear();
+                    } else if (typeof movie.dateRelease === "string") {
+                        const dateReleaseAsString = movie.dateRelease as string;
+                        yearRelease = dateReleaseAsString.substring(0, 4);
+                    } else {
+                        yearRelease = "";
+                    }
 
-                return [
-                    movie.userId || 1,
-                    movie.title,
-                    movie.summary,
-                    movie.image,
-                    movie.dateRelease,
-                    yearRelease,
-                    movie.revenue,
-                    // movie.favorit ? 1 : 0,
-                ]
-            }).filter(Boolean);
+                    return [
+                        movie.userId || 1,
+                        movie.title,
+                        movie.summary,
+                        movie.image,
+                        movie.dateRelease,
+                        yearRelease,
+                        movie.revenue,
+                        // movie.favorit ? 1 : 0,
+                    ];
+                })
+                .filter(Boolean);
 
             const [result] = await this.pool.query<ResultSetHeader>(query, [
                 values,
@@ -295,19 +296,21 @@ class Movie {
         yearReleased: number = 0
     ) {
         try {
-            const maxNumberOfTopMovies = numberOfTopMovies < 100 ? numberOfTopMovies : 10;
-            
-            if(yearReleased === 0){
-                    const query = `
+            const maxNumberOfTopMovies =
+                numberOfTopMovies < 100 ? numberOfTopMovies : 10;
+
+            if (yearReleased === 0) {
+                const query = `
                     SELECT * FROM movie
                     ORDER BY revenue DESC
                     LIMIT ?;
                 `;
 
-                const [moviesResult, _]: [QueryResult, FieldPacket[]] =
+                const [queryResult, _]: [QueryResult, FieldPacket[]] =
                     await this.pool.execute(query, [
                         maxNumberOfTopMovies.toString(),
-                    ]); 
+                    ]);
+                const moviesResult: MovieType[] = queryResult as MovieType[];
                 return moviesResult;
             } else {
                 const query = `
@@ -317,14 +320,15 @@ class Movie {
                     LIMIT ?;
                 `;
 
-                const [moviesResult, _]: [QueryResult, FieldPacket[]] =
+                const [queryResult, _]: [QueryResult, FieldPacket[]] =
                     await this.pool.execute(query, [
                         yearReleased.toString(),
                         maxNumberOfTopMovies.toString(),
-                    ]); 
+                    ]);
+
+                const moviesResult: MovieType[] = queryResult as MovieType[];
                 return moviesResult;
             }
-            
         } catch (error: unknown) {
             if (error instanceof Error) {
                 const mysqlError = error as MySqlError;
@@ -360,7 +364,7 @@ class Movie {
     ) {
         try {
             const limit = moviesPerPage < 70 ? moviesPerPage : 30;
-            const offset = (currentPage-1) * limit;
+            const offset = (currentPage - 1) * limit;
 
             const query = `
                 SELECT * FROM movie 
@@ -372,7 +376,7 @@ class Movie {
              * bug seems to work only when working with strings and not numbers
              * using this package mysql2/promise
              */
-            const [moviesResult, _]: [QueryResult, FieldPacket[]] =
+            const [queryResult, _]: [QueryResult, FieldPacket[]] =
                 await this.pool.execute(query, [
                     limit.toString(),
                     offset.toString(),
@@ -384,6 +388,7 @@ class Movie {
             //     date_created: string;
             //     status: string;
             // }[]; // Type assertion
+            const moviesResult: MovieType[] = queryResult as MovieType[];
             return moviesResult;
         } catch (error: unknown) {
             if (error instanceof Error) {

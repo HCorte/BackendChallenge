@@ -13,11 +13,29 @@ export const getMoviesWithFilters = async (
         const numberOfTopMovies = Number(ntop) || 10;
         const yearReleased = Number(year) || 0;
 
-        const movies = await Movie.findWithFilter(numberOfTopMovies, yearReleased);
-        res.status(200).json({
-            message: "List of Movies",
-            movies,
-        });
+        const host = req.get("host"); // e.g., 'localhost:3000' or 'example.com'
+        const protocol = req.protocol; // 'http' or 'https'
+
+        const movies = await Movie.findWithFilter(
+            numberOfTopMovies,
+            yearReleased
+        );
+        if (movies) {
+            movies.map((movie) => {
+                if (!movie.thumbnail?.includes("http")) {
+                    movie.thumbnail = `${protocol}://${host}/images/${movie.thumbnail}`;
+                }
+            });
+            res.status(200).json({
+                message: "List of Movies",
+                movies,
+            });
+        } else {
+            res.status(200).json({
+                message: "List of Movies",
+                movies: [],
+            });
+        }
     } catch (error) {
         error instanceof ErrorException ? next(error) : console.warn(error);
     }
@@ -54,12 +72,27 @@ export const getMovies = async (
         const { currentPage, moviesPerPage } = req.query;
         const page = Number(currentPage) || 1;
         const limit = Number(moviesPerPage) || 30;
-        
+
+        const host = req.get("host"); // e.g., 'localhost:3000' or 'example.com'
+        const protocol = req.protocol; // 'http' or 'https'
+
         const movies = await Movie.findWithPagination(page, limit);
-        res.status(200).json({
-            message: "List of Movies",
-            movies,
-        });
+        if (movies) {
+            movies.map((movie) => {
+                if (!movie.thumbnail?.includes("http")) {
+                    movie.thumbnail = `${protocol}://${host}/images/${movie.thumbnail}`;
+                }
+            });
+            res.status(200).json({
+                message: "List of Movies",
+                movies,
+            });
+        } else {
+            res.status(200).json({
+                message: "List of Movies",
+                movies: [],
+            });
+        }
     } catch (error) {
         error instanceof ErrorException ? next(error) : console.warn(error);
     }
@@ -77,7 +110,7 @@ export const postMovie = async (
                 summary,
                 dateRelease = new Date(),
                 image,
-                revenue,
+                revenue = 0,
                 // favorit = false,
             } = req.body;
 
