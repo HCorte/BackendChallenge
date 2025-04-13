@@ -61,16 +61,14 @@ export const login = async (
 ) => {
     try {
         const { username, password } = req.body;
-        if(!(username && password)){
-            const error = new ErrorException(
-                "Bad Request"
-            );
+        if (!(username && password)) {
+            const error = new ErrorException("Bad Request");
             error.statusCode = 400;
             error.errorType = ErrorType.WARNING;
             throw error;
         }
+
         const user = await findUserByUsername({ username });
-        console.log(user)
         if (!user) {
             const error = new ErrorException(
                 "This username or password is invalid"
@@ -99,7 +97,8 @@ export const login = async (
             },
             "NodeJS rules and keeps growing its base",
             {
-                expiresIn: "1h",
+                expiresIn: "8h",
+                //expiresIn: "1m", //for testing purposes
             }
         );
         res.status(200).json({
