@@ -15,6 +15,7 @@ PORT=8080
 Environment use keep 'development'
 NODE_ENV=development
 MySQL database paramameter (the names give are self explained)
+
 MYSQL_DB_USER=root
 
 MYSQL_DB_PASSWORD=
