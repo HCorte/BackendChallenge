@@ -1,0 +1,335 @@
+{
+	"info": {
+		"_postman_id": "a3bdb157-acf9-4c06-bbcb-c1598ddb70d4",
+		"name": "BackendChallenge",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8213153"
+	},
+	"item": [
+		{
+			"name": "Login/SIgnup",
+			"item": [
+				{
+					"name": "User",
+					"item": [
+						{
+							"name": "Signup",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"hcorte\",\n    \"firstname\":\"Henrique\",\n    \"lastname\": \"Corte\",\n    \"email\":\"hcorte4@proton.me\",\n    \"password\":\"hmmbcf\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/signup",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"signup"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"var data = pm.response.json();",
+											"",
+											"pm.globals.set(\"Logintoken\", data.token);",
+											"pm.globals.set(\"userId\", data.userId);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"hcorte\",\n    \"password\": \"hmmbcf\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Movie",
+			"item": [
+				{
+					"name": "Create Movie",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title 1",
+									"type": "text"
+								},
+								{
+									"key": "summary",
+									"value": "summary 1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1efae6fb-a22f-4230-90da-3d2a40e128f1"
+								},
+								{
+									"key": "image",
+									"value": "https://wallup.net/wp-content/uploads/2019/09/858538-poster-movie-film-movies-posters.jpg",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "revenue",
+									"value": "1000",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/movie/create",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Movies By Filter",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/movie/moviesfiltered?ntop=10&year=2000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"moviesfiltered"
+							],
+							"query": [
+								{
+									"key": "ntop",
+									"value": "10"
+								},
+								{
+									"key": "year",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get List Of Movies",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/movie/movies?currentPage=1&moviesPerPage=25",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "currentPage",
+									"value": "1"
+								},
+								{
+									"key": "moviesPerPage",
+									"value": "25"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Movie By Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/movie/movieById?movieId=107",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"movieById"
+							],
+							"query": [
+								{
+									"key": "movieId",
+									"value": "107"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"example\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/movie/updateMovie",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"movie",
+								"updateMovie"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Dummy",
+			"item": [
+				{
+					"name": "Save Dummy Movies into DB",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{Logintoken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "title",
+									"value": "title 1",
+									"type": "text"
+								},
+								{
+									"key": "summary",
+									"value": "summary 1",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1efae6fb-a22f-4230-90da-3d2a40e128f1",
+									"disabled": true
+								},
+								{
+									"key": "image",
+									"value": "https://wallup.net/wp-content/uploads/2019/09/858538-poster-movie-film-movies-posters.jpg",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/dummy/saveDummyMovies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"dummy",
+								"saveDummyMovies"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
