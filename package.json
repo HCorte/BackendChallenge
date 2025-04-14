@@ -6,6 +6,7 @@
     "type": "module",
     "scripts": {
         "start": "nodemon ./dist/app.js",
+        "prd": "node ./dist/app.js",
         "build": "tsc && npx cpx2 'src/images/**/*' 'dist/images'",
         "generate": "node ./dummyData/generate.js",
         "test": "npm run test:integration"
